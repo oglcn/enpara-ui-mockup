@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0;
+            --border-color: #333333;
+            --accent-purple: #AB4DA1;
+            --accent-green: #8CCA32;
+        }
+
+        .light-mode {
+            --bg-primary: #F3F4F6;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .main-container {
+            max-width: 400px;
+            height: 100vh;
+            margin: auto;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 1rem;
+        }
+        .text-main { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .accent-action { color: var(--accent-purple); }
+        .accent-blue { color: #11ABF1; }
+        .accent-icon-bg-blue { background-color: rgba(17, 171, 241, 0.1); }
+        .border-divider { border-color: var(--border-color); }
+        .text-brand-green { color: var(--accent-green); }
+        .bg-brand-green { background-color: var(--accent-green); }
+        
+        .nav-pane {
+            background-color: var(--bg-secondary);
+            transition: transform 0.3s ease-in-out;
+        }
+        .nav-overlay { transition: opacity 0.3s ease-in-out; }
+        .page { display: none; }
+        .page.active { display: flex; flex-direction: column; flex-grow: 1; }
+        .page-content { flex-grow: 1; overflow-y: auto; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        input, textarea {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .light-mode input, .light-mode textarea {
+            background-color: #F9FAFB;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <div id="main-container" class="main-container shadow-lg">
+        <!-- Navigation Pane (scoped to main container) -->
+        <div id="nav-overlay" class="nav-overlay absolute inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none"></div>
+        <nav id="nav-pane" class="nav-pane absolute top-0 left-0 h-full w-4/5 max-w-xs z-50 transform -translate-x-full flex flex-col">
+            <div class="flex-grow overflow-y-auto no-scrollbar">
+                <ul class="nav-links">
+                    <li><a href="#" data-target="en-ozet-page" class="flex justify-between items-center p-3 text-white" style="background-color: #AB4DA1;"><span class="font-semibold">En Özet</span> <i class="fas fa-chevron-right text-xs"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">En Hızlı</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Hesaplar</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Encard</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" data-target="kredi-karti-page" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Kredi kartı</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Krediler</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" data-target="gonderen-secimi-page" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Transferler</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Ödemeler</span> <i class="fas fa-chevron-down text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Talimatlar</span> <i class="fas fa-chevron-down text-xs text-secondary"></i></a></li>
+                    <li><a href="#" data-target="alis-satis-page" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Alış / Satış</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Karekod</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Belgelerim</span> <i class="fas fa-chevron-down text-xs text-secondary"></i></a></li>
+                    <li><a href="#" class="flex justify-between items-center p-3 border-b border-divider"><span class="font-semibold">Bizi Tavsiye Edin</span> <i class="fas fa-chevron-right text-xs text-secondary"></i></a></li>
+                </ul>
+            </div>
+            <div class="p-4 border-t border-divider flex-shrink-0 space-y-4">
+                <label for="theme-toggle-checkbox" class="flex items-center justify-between cursor-pointer">
+                    <span class="font-semibold">Koyu Mod</span>
+                    <div class="relative">
+                        <input type="checkbox" id="theme-toggle-checkbox" class="sr-only peer" checked>
+                        <div class="w-12 h-7 bg-gray-600 rounded-full peer-checked:bg-[#AB4DA1] transition-colors"></div>
+                        <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                    </div>
+                </label>
+                <div class="grid grid-cols-3 text-center">
+                    <a href="#" class="p-2 flex flex-col items-center"><i class="fas fa-building-columns text-2xl accent-action mb-1"></i><span class="text-xs">e-Devlet</span></a>
+                    <a href="#" class="p-2 flex flex-col items-center"><i class="fas fa-cog text-2xl accent-action mb-1"></i><span class="text-xs">Ayarlar</span></a>
+                    <a href="#" class="p-2 flex flex-col items-center"><i class="fas fa-sign-out-alt text-2xl accent-action mb-1"></i><span class="text-xs">Çıkış</span></a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- SHARED HEADER -->
+        <header class="flex-shrink-0">
+            <div class="flex h-1.5 w-full">
+                <div class="w-1/4" style="background-color: #AB4DA1;"></div><div class="w-1/4" style="background-color: #FC9800;"></div><div class="w-1/4" style="background-color: #8CCA32;"></div><div class="w-1/4" style="background-color: #11ABF1;"></div>
+            </div>
+            <div class="p-4 grid grid-cols-3 items-center w-full">
+                <div class="justify-self-start">
+                    <i id="menu-toggle" class="fas fa-bars text-xl accent-action cursor-pointer"></i>
+                    <i id="back-button" class="fas fa-chevron-left text-xl accent-action cursor-pointer hidden"></i>
+                </div>
+                <div class="justify-self-center">
+                     <h1 id="header-title" class="text-xl font-semibold whitespace-nowrap">En Özet</h1>
+                </div>
+                <div class="flex items-center space-x-4 justify-self-end">
+                     <i id="privacy-toggle" class="fas fa-eye text-xl cursor-pointer"></i>
+                     <i id="header-chat-icon" class="fas fa-comment-dots text-xl"></i>
+                     <i id="header-bell-icon" class="fas fa-bell text-xl"></i>
+                </div>
+            </div>
+        </header>
+        
+        <!-- PAGE CONTAINER -->
+        <main id="page-container" class="flex-grow overflow-y-hidden">
+            <div id="en-ozet-page" class="page active h-full overflow-y-auto no-scrollbar">
+                <!-- Top Actions Grid -->
+                <div class="p-4 grid grid-cols-2 gap-3">
+                    <div class="card p-3 flex flex-col items-center justify-between text-center"><i class="fas fa-gift text-3xl accent-blue"></i><p class="font-semibold text-sm mt-2">Fırsatlar</p></div>
+                    <div class="card p-3 flex flex-col items-center justify-between text-center">
+                        <div class="w-10 h-10"><svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M42.7,21.5c0,9.3-7.7,16.8-17.2,16.8S8.3,30.8,8.3,21.5S16,4.7,25.5,4.7S42.7,12.2,42.7,21.5Z" stroke="#FC9800" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 37.5L14 44.5L22 40.5" stroke="#FC9800" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 37.5L36 44.5L28 40.5" stroke="#FC9800" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="900" fill="#FC9800">en</text></svg></div>
+                        <div class="flex items-center space-x-1.5"><span class="h-2 w-2 rounded-full" style="background-color: #FC9800;"></span><span class="h-2 w-2 rounded-full" style="background-color: #FC9800;"></span><span class="h-2 w-2 bg-gray-600 rounded-full"></span><span class="h-2 w-2 bg-gray-600 rounded-full"></span><span class="h-2 w-2 bg-gray-600 rounded-full"></span></div>
+                    </div>
+                    <div class="card p-3 flex flex-col items-center justify-between text-center cursor-pointer" data-target="gonderen-secimi-page">
+                        <i class="fas fa-paper-plane text-3xl accent-action"></i>
+                        <p class="font-semibold text-sm mt-2">Para Transferi</p>
+                    </div>
+                    <div class="card p-3 flex flex-col items-center justify-between text-center cursor-pointer">
+                        <i class="fas fa-qrcode text-3xl accent-action"></i>
+                        <p class="font-semibold text-sm mt-2">QR İşlemleri</p>
+                    </div>
+                </div>
+                
+                <!-- Accounts Section -->
+                <div class="px-4 pb-4"><div class="card p-4"><h2 class="font-bold text-lg mb-4">Hesaplar</h2><div class="space-y-3"><div class="flex justify-between items-center"><p class="text-secondary">Toplam</p><p id="ozet-toplam" class="font-bold text-lg privacy-maskable" data-mask="**,***,** TL"></p></div><div class="flex justify-between items-center"><p class="text-secondary">Vadesiz TL</p><p id="ozet-vadesiz-tl" class="privacy-maskable" data-mask="**,***,** TL"></p></div><div class="flex justify-between items-center"><p class="text-secondary">Vadesiz USD</p><p id="ozet-vadesiz-usd" class="privacy-maskable" data-mask="*,** USD"></p></div></div><div class="border-t border-divider my-4"></div><div class="flex justify-between items-center text-main"><span>Diğer banka hesapları</span><i class="fas fa-chevron-right"></i></div></div></div>
+                <div class="px-4 pb-4"><div class="card p-4 cursor-pointer" data-target="kredi-karti-page"><div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">Kredi kartı</h2><i class="fas fa-chevron-right text-secondary"></i></div><div class="space-y-3"><div class="flex justify-between items-center"><p class="text-secondary">Son ekstreden kalan borç</p><p id="ozet-kredi-borc" class="privacy-maskable" data-mask="*,***,** TL"></p></div><div class="flex justify-between items-center"><p class="text-secondary">Kullanılabilir limit</p><p id="ozet-kredi-limit" class="privacy-maskable" data-mask="**.***,** TL"></p></div></div></div></div>
+                <div class="px-4 pb-4"><div class="card p-4"><h2 class="font-bold text-lg mb-2">Teklifler ve başvurular</h2><div class="space-y-1"><div class="flex justify-between items-center py-1.5"><p class="text-secondary">İhtiyaç kredisi</p><a href="#" class="font-semibold accent-action">Başvur <i class="fas fa-chevron-right text-xs"></i></a></div><div class="border-t border-divider"></div><div class="flex justify-between items-center py-1.5"><p class="text-secondary">Kredi kartı yeni limit</p><a href="#" class="font-semibold accent-action">Başvur <i class="fas fa-chevron-right text-xs"></i></a></div></div></div></div>
+                <div class="px-4 pb-4"><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">Son İşlemlerim</h2><i class="fas fa-chevron-right text-secondary"></i></div><div><div class="flex justify-between items-center py-2"><div><p class="font-semibold">Gelen Transfer - test...</p><p class="text-sm text-secondary">Bugün</p></div><p class="font-semibold text-brand-green">+0,01 TL</p></div><div class="border-t border-divider"></div><div class="flex justify-between items-center py-2"><div><p class="font-semibold">Gelen Transfer</p><p class="text-sm text-secondary">Bugün</p></div><p class="font-semibold text-brand-green">+1.05 TL</p></div></div></div></div>
+            </div>
+
+            <div id="kredi-karti-page" class="page h-full">
+                <div class="page-content no-scrollbar">
+                    <div class="p-4 space-y-2">
+                        <div class="card p-3"><div class="flex justify-between items-center mb-3"><h2 class="font-bold text-lg">Son ekstre</h2><i class="fas fa-chevron-right text-secondary"></i></div><div class="space-y-2"><div class="flex justify-between items-center"><p class="text-secondary">Son ekstre borcu</p><p id="kredi-ekstre-borc" class="privacy-maskable" data-mask="*,***,** TL"></p></div><div class="flex justify-between items-center"><p class="text-secondary">Son ödeme tarihi</p><p>11/09/2023</p></div><div class="flex justify-between items-center"><p class="text-secondary">Son ekstreden kalan borç</p><p class="privacy-maskable" data-mask="*,** TL">0,00 TL</p></div><div class="flex justify-between items-center"><p class="text-secondary">Kalan minimum ödeme tutarı</p><p class="privacy-maskable" data-mask="*,** TL">0,00 TL</p></div></div></div>
+                        <div class="card p-3"><h2 class="font-bold text-lg mb-3">Güncel durum</h2><div class="space-y-2"><div class="flex justify-between items-center"><p class="text-secondary">Ekstre kesim tarihi</p><p>30/09/2023</p></div><div class="flex justify-between items-center"><p class="text-secondary">Kullanılabilir limit</p><div class="flex items-center gap-2"><p id="kredi-kullanilabilir-limit" class="privacy-maskable" data-mask="**.***,** TL"></p><i class="fas fa-chevron-right text-secondary text-xs"></i></div></div><div class="flex justify-between items-center"><p class="text-secondary">Güncel dönem borcu</p><div class="flex items-center gap-2"><p id="kredi-guncel-borc" class="privacy-maskable" data-mask="***,** TL"></p><i class="fas fa-chevron-right text-secondary text-xs"></i></div></div><div class="flex justify-between items-center"><p class="text-secondary">Provizyondaki işlemler</p><div class="flex items-center gap-2"><p class="privacy-maskable" data-mask="*,** TL">5,00 TL</p><i class="fas fa-chevron-right text-secondary text-xs"></i></div></div><div class="flex justify-between items-center"><p class="text-secondary">Gelecek dönem taksitleri</p><div class="flex items-center gap-2"><p class="privacy-maskable" data-mask="*,** TL">0,00 TL</p><i class="fas fa-chevron-right text-secondary text-xs"></i></div></div><div class="flex justify-between items-center"><p class="font-semibold">Toplam borç</p><p id="kredi-toplam-borc" class="font-semibold privacy-maskable" data-mask="*,***,** TL"></p></div></div></div>
+                        <div class="card p-3"><div class="flex justify-between items-center mb-3"><h2 class="font-bold text-lg">Sanal kredi kartı</h2><i class="fas fa-chevron-right text-secondary"></i></div><div class="space-y-2"><div class="flex justify-between items-center"><p class="text-secondary">Kart numarası</p><p class="privacy-maskable" data-mask="**** **** **** ****">5555 4444 3333 2222</p></div><div class="flex justify-between items-center"><p class="text-secondary">Son Kullanma Tarihi</p><p>12/28</p></div><div class="flex justify-between items-center"><p class="text-secondary">CVV</p><p class="privacy-maskable" data-mask="***">123</p></div><div class="flex justify-between items-center"><p class="text-secondary">Limit</p><p class="privacy-maskable" data-mask="*,***,** TL">5.000,00 TL</p></div><div class="flex justify-between items-center"><p class="text-secondary">Limit Geçerlilik Süresi</p><p>24 saat</p></div></div></div>
+                    </div>
+                </div>
+                <div class="p-4 grid grid-cols-3 gap-2 bg-primary border-t border-divider flex-shrink-0">
+                    <button class="p-2 rounded-lg text-sm font-semibold text-center card">Kart ve limit bilgileri</button><button class="p-2 rounded-lg text-sm font-semibold text-center card">Ekstre gözlem</button><button class="p-2 rounded-lg text-sm font-semibold text-center card">Dekont/Slip gözlem</button><button class="p-2 rounded-lg text-sm font-semibold text-center text-white bg-[#AB4DA1]">Harcama taksitlendir</button><button class="p-2 rounded-lg text-sm font-semibold text-center text-white bg-[#AB4DA1]">Nakit avans kullan</button><button class="p-2 rounded-lg text-sm font-semibold text-center text-white bg-[#AB4DA1]">Ödeme yap</button>
+                </div>
+            </div>
+
+            <div id="alis-satis-page" class="page h-full">
+                 <div class="page-content no-scrollbar">
+                    <div class="p-4">
+                        <div class="bg-brand-green text-black font-bold text-center py-2 rounded-lg mb-4">Alış</div>
+                    </div>
+                    <div class="px-4 space-y-3">
+                        <div>
+                            <label class="text-sm text-secondary">Alınacak döviz cinsi</label>
+                            <div class="card mt-1 p-3 flex justify-between items-center">
+                                <span>USD</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 items-center text-center">
+                            <div><p class="font-semibold">Vadesiz TL</p><p id="alis-vadesiz-tl" class="text-secondary text-sm privacy-maskable" data-mask="**,***,** TL"></p></div>
+                            <i class="fas fa-long-arrow-alt-right text-2xl text-brand-green"></i>
+                            <div><p class="font-semibold">Vadesiz USD</p><p id="alis-vadesiz-usd" class="text-secondary text-sm privacy-maskable" data-mask="***.***,** USD"></p></div>
+                        </div>
+                        <div>
+                             <label class="text-sm text-secondary">İşlem tutarı</label>
+                             <div class="card mt-1 p-3 flex justify-between items-center">
+                                <span>10,00 USD</span>
+                                <span class="accent-action text-sm font-semibold">TL ile işlem yap</span>
+                             </div>
+                        </div>
+                         <div>
+                             <label class="text-sm text-secondary">İşlem kuru</label>
+                             <p id="exchange-rate-display" class="text-3xl font-bold accent-action text-right">39,220000 TL</p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center py-4">
+                            <div class="relative w-24 h-24">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                                    <circle id="countdown-circle" class="text-purple-500" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="stroke-dasharray: 283; stroke-dashoffset: 283; transform: rotate(-90deg); transform-origin: 50% 50%;" />
+                                </svg>
+                                <span id="countdown-text" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold">15</span>
+                            </div>
+                            <p class="text-secondary text-sm mt-2">İşlemi tamamlamak için kalan süre</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 flex-shrink-0">
+                    <button id="alis-satis-action-button" class="w-full bg-[#AB4DA1] text-white font-bold py-3 rounded-lg">Devam</button>
+                </div>
+            </div>
+            
+            <div id="para-transferi-page" class="page h-full">
+                <div class="page-content no-scrollbar">
+                    <div class="p-4">
+                        <div class="bg-brand-green text-black font-bold text-center py-2 rounded-lg mb-4">Transfer Detayları</div>
+                    </div>
+                    <div class="px-4 space-y-3">
+                        <div class="grid grid-cols-3 items-center text-center">
+                            <div class="cursor-pointer" data-target="gonderen-secimi-page" data-source="para-transferi-page">
+                                <p class="font-semibold">Gönderen</p>
+                                <p id="transfer-gonderen-hesap" class="text-secondary text-sm"></p>
+                                <p id="transfer-gonderen-bakiye" class="font-semibold privacy-maskable" data-mask="**.***,** TL"></p>
+                            </div>
+                            <i class="fas fa-long-arrow-alt-right text-2xl text-brand-green"></i>
+                            <div class="cursor-pointer" data-target="alici-secimi-page" data-source="para-transferi-page">
+                                <p class="font-semibold">Alıcı</p>
+                                <p id="transfer-alici-hesap" class="text-secondary text-sm"></p>
+                                <p id="transfer-alici-bakiye" class="font-semibold privacy-maskable" data-mask="***.***,** TL"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <label for="tutar-input" class="text-sm text-secondary">Tutar</label>
+                                <button id="tum-bakiye-btn" class="text-sm font-semibold accent-action">Tüm bakiye</button>
+                            </div>
+                            <div class="relative mt-1">
+                                <input type="text" id="tutar-input" class="w-full rounded-lg p-3 pr-12 text-main text-right font-semibold text-lg focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]" value="3.500,00">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary font-semibold">TL</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm text-secondary">Açıklama</label>
+                            <textarea id="transfer-aciklama" class="w-full rounded-lg p-3 mt-1 h-24 text-main focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]"></textarea>
+                        </div>
+                        
+                        <label for="save-transaction-checkbox" class="flex items-center justify-between card p-3 cursor-pointer">
+                            <span class="font-semibold">En Hızlı İşlemlerime Ekle</span>
+                            <div class="relative">
+                                <input type="checkbox" id="save-transaction-checkbox" class="sr-only peer">
+                                <div class="w-12 h-7 bg-gray-600 rounded-full peer-checked:bg-[#AB4DA1] transition-colors"></div>
+                                <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="p-4 flex-shrink-0">
+                    <button class="w-full bg-[#AB4DA1] text-white font-bold py-3 rounded-lg">Devam</button>
+                </div>
+            </div>
+
+            <div id="gonderen-secimi-page" class="page h-full">
+                <div class="page-content no-scrollbar">
+                    <div class="p-4">
+                        <div class="bg-brand-green text-black font-bold text-center py-2 rounded-lg mb-4">Gönderen Seçimi</div>
+                    </div>
+                    <div class="px-4 space-y-2">
+                         <div id="gonderen-hizli-islem" class="card p-3 flex justify-between items-center cursor-pointer">
+                             <span class="flex items-center gap-2"><i class="fas fa-bolt accent-action"></i> En Hızlı İşlemlerimden Getir</span>
+                             <i class="fas fa-chevron-down text-secondary"></i>
+                         </div>
+                         <hr class="border-t border-divider my-2">
+                         <div class="card p-3 flex justify-between items-center cursor-pointer" data-account-select='{"type": "sender", "name": "Vadesiz TL", "key": "vadesizTL"}'>
+                            <div>
+                                <p class="font-semibold">Vadesiz TL</p>
+                                <p id="secim-vadesiz-tl" class="text-secondary text-sm privacy-maskable" data-mask="**,***,** TL"></p>
+                            </div>
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                         <div class="card p-3 flex justify-between items-center cursor-pointer" data-account-select='{"type": "sender", "name": "Birikim", "key": "birikim"}'>
+                            <div>
+                                <p class="font-semibold">Birikim</p>
+                                <p id="secim-birikim" class="text-secondary text-sm privacy-maskable" data-mask="**,***,** TL"></p>
+                            </div>
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                         <div class="card p-3 flex justify-between items-center cursor-pointer" data-account-select='{"type": "sender", "name": "Enpara.com kredi kartı", "key": "krediKarti"}'>
+                            <div>
+                                <p class="font-semibold">Enpara.com kredi kartı</p>
+                                <p id="secim-kredi-kart" class="text-secondary text-sm privacy-maskable" data-mask="**.***,** TL"></p>
+                            </div>
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                         <div class="card p-3 flex justify-between items-center">
+                             <p class="font-semibold">Diğer banka hesapları</p>
+                             <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                    </div>
+                </div>
+                 <div class="p-4 flex-shrink-0">
+                    <button class="w-full flex justify-between items-center text-main font-bold py-3 rounded-lg accent-action">
+                        <i class="fas fa-heart"></i>
+                        <span>Kalpten transfer</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="alici-secimi-page" class="page h-full">
+                <div class="page-content no-scrollbar">
+                    <div class="p-4">
+                        <div class="bg-brand-green text-black font-bold text-center py-2 rounded-lg mb-4">Alıcı Seçimi</div>
+                    </div>
+                    <div class="px-4 space-y-2">
+                         <div id="alici-hizli-islem" class="card p-3 flex justify-between items-center cursor-pointer">
+                             <span class="flex items-center gap-2"><i class="fas fa-bolt accent-action"></i> En Hızlı İşlemlerimden Getir</span>
+                             <i class="fas fa-chevron-down text-secondary"></i>
+                         </div>
+                         <hr class="border-t border-divider my-2">
+                         <div class="card p-3 flex justify-between items-center cursor-pointer" data-account-select='{"type": "receiver", "name": "Birikim", "key": "birikim"}'>
+                            <div>
+                                <p class="font-semibold">Birikim</p>
+                                <p id="alici-secim-birikim" class="text-secondary text-sm privacy-maskable" data-mask="**,***,** TL"></p>
+                            </div>
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                         <div class="card p-3 flex justify-between items-center cursor-pointer" data-target="baska-alici-page">
+                             <p class="font-semibold">Başka bir alıcı</p>
+                             <i class="fas fa-chevron-right text-secondary"></i>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="baska-alici-page" class="page h-full">
+                 <div class="page-content no-scrollbar">
+                    <div class="p-4">
+                        <div class="bg-brand-green text-black font-bold text-center py-2 rounded-lg mb-4">Transfer Detayları</div>
+                    </div>
+                    <div class="px-4 space-y-3">
+                         <div>
+                            <label class="text-sm text-secondary">Gönderen hesap</label>
+                            <p id="baska-gonderen-hesap" class="font-semibold"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm text-secondary">IBAN</label>
+                            <input type="text" id="baska-alici-iban" class="w-full rounded-lg p-3 mt-1 text-main focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]">
+                        </div>
+                         <div>
+                            <label class="text-sm text-secondary">Alıcı adı soyadı / unvanı</label>
+                            <input type="text" id="baska-alici-ad" class="w-full rounded-lg p-3 mt-1 text-main focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]">
+                        </div>
+                        <div>
+                            <label class="text-sm text-secondary">Tutar</label>
+                            <input type="text" id="baska-alici-tutar" class="w-full rounded-lg p-3 mt-1 text-main focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]">
+                        </div>
+                         <div>
+                            <label class="text-sm text-secondary">Transfer tipi</label>
+                             <div class="card mt-1 p-3 flex justify-between items-center">
+                                <span>Para transferi</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-secondary">Açıklama</label>
+                            <textarea id="baska-alici-aciklama" class="w-full rounded-lg p-3 mt-1 h-24 text-main focus:outline-none focus:ring-2 focus:ring-[#AB4DA1]"></textarea>
+                        </div>
+                        <label for="baska-alici-save-checkbox" class="flex items-center justify-between card p-3 cursor-pointer">
+                            <span class="font-semibold">En Hızlı İşlemlerime Ekle</span>
+                            <div class="relative">
+                                <input type="checkbox" id="baska-alici-save-checkbox" class="sr-only peer">
+                                <div class="w-12 h-7 bg-gray-600 rounded-full peer-checked:bg-[#AB4DA1] transition-colors"></div>
+                                <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="p-4 flex-shrink-0">
+                    <button class="w-full bg-[#AB4DA1] text-white font-bold py-3 rounded-lg">Gönder</button>
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- MODAL for Quick Transactions -->
+        <div id="hizli-islem-modal" class="absolute inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center hidden">
+            <div class="bg-secondary rounded-lg w-11/12 max-w-sm">
+                <div class="flex justify-between items-center p-4 border-b border-divider">
+                    <h2 class="text-xl font-semibold">En Hızlı İşlemler</h2>
+                    <button id="close-modal-btn" class="text-2xl">&times;</button>
+                </div>
+                <div id="hizli-islem-modal-list" class="p-4 space-y-2">
+                    <!-- Items will be populated here by JS -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Data ---
+        const accountData = {
+            vadesizTL: 25650.75,
+            vadesizUSD: 4.00,
+            vadesizEUR: 1.00,
+            birikim: 29800.10,
+            krediKarti: {
+                limit: 45000.00,
+                sonEkstreBorc: 2150.50,
+                guncelDonemBorc: 875.25,
+            }
+        };
+
+        const savedTransactions = [
+            { name: 'Ahmet Yılmaz (Kira)', recipient: 'Ahmet Yılmaz', iban: 'TR12 0006 2000 0000 0006 2932 45', amount: 4500.00, description: 'Temmuz Kira' },
+            { name: 'Zeynep Kaya (Doğum Günü)', recipient: 'Zeynep Kaya', iban: 'TR44 0004 6000 0000 0001 2345 67', amount: 120.00, description: 'Doğum günü hediyesi' },
+            { name: 'Ali Veli (Borç)', recipient: 'Ali Veli', iban: 'TR21 0001 0000 0000 0001 2345 67', amount: 500.00, description: 'Borç ödemesi' },
+        ];
+
+        const formatCurrency = (value, currency = 'TRY') => {
+            const options = { style: 'currency', currency: currency, minimumFractionDigits: 2 };
+            const numberFormatter = new Intl.NumberFormat('tr-TR', options);
+            const parts = numberFormatter.formatToParts(value);
+            let numberValue = parts.filter(p => p.type !== 'currency').map(p => p.value).join('').trim();
+            if (currency === 'TRY') return `${numberValue} TL`;
+            if (currency === 'USD') return `${numberValue} USD`;
+            if (currency === 'EUR') return `${numberValue} EUR`;
+            return `${numberValue} ${currency}`;
+        };
+
+        // --- DOM Elements ---
+        const mainContainer = document.getElementById('main-container');
+        const themeToggle = document.getElementById('theme-toggle-checkbox');
+        const menuToggle = document.getElementById('menu-toggle');
+        const backButton = document.getElementById('back-button');
+        const headerTitle = document.getElementById('header-title');
+        const navPane = document.getElementById('nav-pane');
+        const navOverlay = document.getElementById('nav-overlay');
+        const privacyToggle = document.getElementById('privacy-toggle');
+        const pageContainer = document.getElementById('page-container');
+        const navLinks = document.querySelectorAll('[data-target]');
+        const headerIcons = { chat: document.getElementById('header-chat-icon'), bell: document.getElementById('header-bell-icon') };
+        
+        const countdownCircle = document.getElementById('countdown-circle');
+        const countdownText = document.getElementById('countdown-text');
+        const exchangeRateDisplay = document.getElementById('exchange-rate-display');
+        const alisSatisButton = document.getElementById('alis-satis-action-button');
+
+        // Modal Elements
+        const hizliIslemModal = document.getElementById('hizli-islem-modal');
+        const hizliIslemModalList = document.getElementById('hizli-islem-modal-list');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        
+        const circleRadius = 45;
+        const circleCircumference = 2 * Math.PI * circleRadius;
+        const countdownDuration = 15;
+        let countdownInterval;
+        let previousPages = ['en-ozet-page'];
+        let transferState = { sender: null, receiver: null, savedTransaction: null };
+
+        let isMasked = false;
+        let maskableElements = [];
+        const originalValues = new Map();
+
+        function populateAllData() {
+            // Populate balances on all pages
+            document.getElementById('ozet-toplam').textContent = formatCurrency(accountData.vadesizTL + accountData.birikim);
+            document.getElementById('ozet-vadesiz-tl').textContent = formatCurrency(accountData.vadesizTL);
+            document.getElementById('ozet-vadesiz-usd').textContent = formatCurrency(accountData.vadesizUSD, 'USD');
+            document.getElementById('ozet-kredi-borc').textContent = formatCurrency(accountData.krediKarti.sonEkstreBorc);
+            document.getElementById('ozet-kredi-limit').textContent = formatCurrency(accountData.krediKarti.limit);
+            document.getElementById('kredi-ekstre-borc').textContent = formatCurrency(accountData.krediKarti.sonEkstreBorc);
+            document.getElementById('kredi-kullanilabilir-limit').textContent = formatCurrency(accountData.krediKarti.limit - accountData.krediKarti.guncelDonemBorc);
+            document.getElementById('kredi-guncel-borc').textContent = formatCurrency(accountData.krediKarti.guncelDonemBorc);
+            document.getElementById('kredi-toplam-borc').textContent = formatCurrency(accountData.krediKarti.guncelDonemBorc);
+            document.getElementById('alis-vadesiz-tl').textContent = formatCurrency(accountData.vadesizTL);
+            document.getElementById('alis-vadesiz-usd').textContent = formatCurrency(accountData.vadesizUSD, 'USD');
+            document.getElementById('secim-vadesiz-tl').textContent = formatCurrency(accountData.vadesizTL);
+            document.getElementById('secim-birikim').textContent = formatCurrency(accountData.birikim);
+            document.getElementById('secim-kredi-kart').textContent = formatCurrency(accountData.krediKarti.limit - accountData.krediKarti.guncelDonemBorc);
+            document.getElementById('alici-secim-birikim').textContent = formatCurrency(accountData.birikim);
+            document.getElementById('tum-bakiye-btn').addEventListener('click', () => {
+                if (transferState.sender && transferState.sender.key === 'vadesizTL') {
+                    document.getElementById('tutar-input').value = accountData.vadesizTL.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+                }
+            });
+        }
+
+        function updateMaskableElements() {
+            maskableElements = document.querySelectorAll('.page.active .privacy-maskable');
+            originalValues.clear();
+            maskableElements.forEach(el => { originalValues.set(el, el.textContent); });
+        }
+        
+        function openMenu() { navPane.classList.remove('-translate-x-full'); navOverlay.classList.remove('opacity-0', 'pointer-events-none'); }
+        function closeMenu() { navPane.classList.add('-translate-x-full'); navOverlay.classList.add('opacity-0', 'pointer-events-none'); }
+        
+        function initializeAlisSatisPage() {
+            const fetchedRate = 39.22; 
+            const formattedRate = fetchedRate.toFixed(6).replace('.', ',') + ' TL';
+            if (exchangeRateDisplay) exchangeRateDisplay.textContent = formattedRate;
+            if(alisSatisButton) alisSatisButton.textContent = 'Devam';
+            startCountdown();
+        }
+
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            let timeLeft = countdownDuration;
+            if (!countdownText || !countdownCircle) return;
+            countdownText.textContent = timeLeft;
+            countdownCircle.style.transition = 'stroke-dashoffset 1s linear';
+            const updateCircle = () => {
+                const progress = timeLeft / countdownDuration;
+                const offset = circleCircumference * (1 - progress);
+                countdownCircle.style.strokeDashoffset = offset;
+            };
+            updateCircle();
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                updateCircle();
+                countdownText.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    if(alisSatisButton) alisSatisButton.textContent = 'Kuru Güncelle';
+                }
+            }, 1000);
+        }
+        
+        function showPage(pageId, fromPageId) {
+            if (fromPageId && pageId !== previousPages[previousPages.length-1]) {
+                previousPages.push(fromPageId);
+            }
+            pageContainer.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) targetPage.classList.add('active');
+            
+            const pageTitles = {
+                'en-ozet-page': 'En Özet', 'kredi-karti-page': 'Kredi Kartı', 'alis-satis-page': 'Alış / Satış',
+                'para-transferi-page': 'Para Transferi', 'gonderen-secimi-page': 'Para Transferi', 'alici-secimi-page': 'Para Transferi',
+                'baska-alici-page': 'Para Transferi'
+            };
+            headerTitle.textContent = pageTitles[pageId] || 'En Özet';
+            
+            if (pageId === 'en-ozet-page') {
+                menuToggle.classList.remove('hidden'); backButton.classList.add('hidden');
+                previousPages = ['en-ozet-page'];
+            } else {
+                menuToggle.classList.add('hidden'); backButton.classList.remove('hidden');
+            }
+            
+            privacyToggle.classList.remove('hidden'); 
+            headerIcons.chat.classList.remove('hidden');
+            headerIcons.bell.classList.remove('hidden');
+            if(['gonderen-secimi-page', 'alici-secimi-page', 'baska-alici-page'].includes(pageId)){
+                 headerIcons.chat.classList.add('hidden'); headerIcons.bell.classList.add('hidden');
+            }
+            
+            if(pageId === 'alis-satis-page') {
+                initializeAlisSatisPage();
+            } else {
+                clearInterval(countdownInterval);
+            }
+            
+            if(pageId === 'baska-alici-page' && !transferState.savedTransaction) {
+                 document.getElementById('baska-alici-iban').value = '';
+                 document.getElementById('baska-alici-ad').value = '';
+                 document.getElementById('baska-alici-tutar').value = '';
+                 document.getElementById('baska-alici-aciklama').value = '';
+            } else if (pageId === 'baska-alici-page' && transferState.savedTransaction) {
+                 const tx = transferState.savedTransaction;
+                 document.getElementById('baska-alici-iban').value = tx.iban;
+                 document.getElementById('baska-alici-ad').value = tx.recipient;
+                 document.getElementById('baska-alici-tutar').value = tx.amount.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+                 document.getElementById('baska-alici-aciklama').value = tx.description;
+            }
+
+            updateMaskableElements();
+            applyMaskState();
+            
+            const activePageContent = document.querySelector('.page.active .page-content, .page.active.overflow-y-auto');
+            if (activePageContent) activePageContent.scrollTop = 0;
+        }
+
+        function applyMaskState() {
+            privacyToggle.classList.toggle('fa-eye', !isMasked);
+            privacyToggle.classList.toggle('fa-eye-slash', isMasked);
+            
+            maskableElements.forEach(el => {
+                if (isMasked) {
+                    el.textContent = el.dataset.mask || '***,** TL';
+                } else if (originalValues.has(el)) {
+                    el.textContent = originalValues.get(el);
+                }
+            });
+        }
+        
+        function updateTransferDetails() {
+            if (transferState.sender) {
+                document.getElementById('transfer-gonderen-hesap').textContent = transferState.sender.name;
+                const senderBalance = transferState.sender.key === 'krediKarti' ? accountData.krediKarti.limit - accountData.krediKarti.guncelDonemBorc : accountData[transferState.sender.key];
+                document.getElementById('transfer-gonderen-bakiye').textContent = formatCurrency(senderBalance);
+                document.getElementById('baska-gonderen-hesap').textContent = `${transferState.sender.name} / ${formatCurrency(senderBalance)}`;
+            }
+            if (transferState.receiver) {
+                 document.getElementById('transfer-alici-hesap').textContent = transferState.receiver.name;
+                 const receiverBalance = accountData[transferState.receiver.key];
+                 document.getElementById('transfer-alici-bakiye').textContent = formatCurrency(receiverBalance);
+            }
+        }
+
+        function openSavedTransactionsModal() {
+            hizliIslemModalList.innerHTML = ''; // Clear previous items
+            savedTransactions.forEach((tx, index) => {
+                const item = document.createElement('div');
+                item.className = 'card p-3 flex justify-between items-center cursor-pointer';
+                item.innerHTML = `<span>${tx.name}</span> <i class="fas fa-chevron-right text-secondary"></i>`;
+                item.dataset.transactionIndex = index;
+                item.addEventListener('click', () => {
+                    const selectedTx = savedTransactions[index];
+                    transferState.sender = { name: "Vadesiz TL", key: "vadesizTL" }; // Default sender for saved tx
+                    transferState.savedTransaction = selectedTx;
+                    updateTransferDetails();
+                    closeSavedTransactionsModal();
+                    showPage('baska-alici-page', 'alici-secimi-page');
+                });
+                hizliIslemModalList.appendChild(item);
+            });
+            hizliIslemModal.classList.remove('hidden');
+        }
+
+        function closeSavedTransactionsModal() {
+            hizliIslemModal.classList.add('hidden');
+        }
+
+
+        menuToggle.addEventListener('click', e => { e.stopPropagation(); openMenu(); });
+        backButton.addEventListener('click', () => showPage(previousPages.pop() || 'en-ozet-page'));
+        navOverlay.addEventListener('click', closeMenu);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetPageId = e.currentTarget.getAttribute('data-target');
+                if (targetPageId) { 
+                    if (targetPageId === 'gonderen-secimi-page') {
+                        transferState = { sender: null, receiver: null, savedTransaction: null };
+                    }
+                    showPage(targetPageId, 'en-ozet-page'); 
+                    closeMenu(); 
+                }
+            });
+        });
+        
+        document.getElementById('alici-hizli-islem').addEventListener('click', openSavedTransactionsModal);
+        document.getElementById('gonderen-hizli-islem').addEventListener('click', openSavedTransactionsModal);
+        closeModalBtn.addEventListener('click', closeSavedTransactionsModal);
+        hizliIslemModal.addEventListener('click', (e) => {
+            if(e.target === hizliIslemModal) {
+                closeSavedTransactionsModal();
+            }
+        });
+        
+        if(alisSatisButton) {
+            alisSatisButton.addEventListener('click', () => {
+                if (alisSatisButton.textContent === 'Kuru Güncelle') {
+                    initializeAlisSatisPage();
+                } else { console.log('Proceeding with transaction...'); }
+            });
+        }
+        
+        privacyToggle.addEventListener('click', () => { isMasked = !isMasked; applyMaskState(); });
+
+        pageContainer.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-target]');
+            const accountSelectTarget = e.target.closest('[data-account-select]');
+
+            if (target && pageContainer.contains(target)) {
+                e.preventDefault();
+                const targetPageId = target.getAttribute('data-target');
+                const currentPageId = target.closest('.page').id;
+                if(targetPageId === 'baska-alici-page') {
+                    transferState.savedTransaction = null; // Clear saved tx state
+                }
+                if(targetPageId) showPage(targetPageId, currentPageId);
+            } else if (accountSelectTarget) {
+                const data = JSON.parse(accountSelectTarget.dataset.accountSelect);
+                const currentPageId = accountSelectTarget.closest('.page').id;
+
+                if (data.type === 'sender') {
+                    transferState.sender = data;
+                    showPage('alici-secimi-page', currentPageId);
+                } else if (data.type === 'receiver') {
+                    transferState.receiver = data;
+                    updateTransferDetails();
+                    showPage('para-transferi-page', currentPageId);
+                }
+            }
+        });
+
+        themeToggle.addEventListener('change', () => {
+            if(themeToggle.checked) {
+                mainContainer.classList.remove('light-mode');
+            } else {
+                mainContainer.classList.add('light-mode');
+            }
+        });
+
+        // Initial setup
+        populateAllData();
+        showPage('en-ozet-page');
+    </script>
+
+</body>
+</html>
